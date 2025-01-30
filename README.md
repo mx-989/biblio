@@ -32,7 +32,7 @@ Edit the `.env` file and set the following variables:
 ## How to Use?
 
 ```sh
-composer install
+cd app && composer install && cd ../
 ```
 
 Once you have Docker and Docker Compose installed and your environment variables configured, you can start the project with the following command:
