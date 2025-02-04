@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Utils\Route;
+
 class Router {
     protected array $routes = [];
     protected string $url;
@@ -13,6 +15,20 @@ class Router {
 
         // Store the HTTP method of the request (e.g., GET, POST).
         $this->method = $_SERVER['REQUEST_METHOD'];
+    }
+
+    public function registerControllers(array $controllers) {
+        // We scan the controllers for attributes and register the routes
+        foreach ($controllers as $controller) {
+            $reflection = new \ReflectionClass($controller);
+            foreach ($reflection->getMethods() as $method) {
+                $attributes = $method->getAttributes(Route::class);
+                foreach ($attributes as $attribute) {
+                    $instance = $attribute->newInstance();
+                    $this->register($instance->method, $instance->path, $controller, $method->getName());
+                }
+            }
+        }
     }
 
     public function register(string $method, string $route, string $controller, string $controllerMethod) {

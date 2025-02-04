@@ -19,6 +19,7 @@ services:
     restart: always
     volumes:
       - ./app:/var/www/html
+      - ./xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
     depends_on:
       - mysql
     environment:
@@ -27,6 +28,9 @@ services:
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
+      AUTH_SECRET: ${AUTH_SECRET}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - database
   mysql:
