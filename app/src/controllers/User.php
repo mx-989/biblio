@@ -6,6 +6,7 @@ use App\Controllers\Controller;
 use App\Models\UserModel;
 use App\Utils\Route;
 use App\Utils\HttpException;
+use App\Middlewares\AuthMiddleware;
 
 class User extends Controller {
   protected object $user;
@@ -28,15 +29,25 @@ class User extends Controller {
     return $this->user->delete(intval($this->params['id']));
   }
 
-  #[Route("GET", "/users/:id")]
+  #[Route("GET", "/users/:id")] 
   public function getUser() {
     return $this->user->get(intval($this->params['id']));
   }
 
-  #[Route("GET", "/users")]
+  #[Route("GET", "/users", middlewares: [AuthMiddleware::class])]
   public function getUsers() {
       $limit = isset($this->params['limit']) ? intval($this->params['limit']) : null;
       return $this->user->getAll($limit);
+  }
+
+  #[Route("GET", "/users_injection")]
+  public function getUserInjection() {
+    return $this->user->getWithoutPrepare($this->body['data']);
+  }
+
+  #[Route("GET", "/users_injection_blocked")]
+  public function getUserInjectionBlocked() {
+    return $this->user->getWithPrepare($this->body['data']);
   }
 
   #[Route("PATCH", "/users/:id")]
