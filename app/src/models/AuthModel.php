@@ -17,25 +17,24 @@ class AuthModel extends SqlConnect {
     $req->execute(["email" => $data["email"]]);
     
     if ($req->rowCount() > 0) {
-      throw new HttpException("User already exist!", 400);
+      throw new HttpException("User already exists!", 400);
     }
 
-    // Hasher le mot de passe
-    $data["password"] = password_hash($data["password"], PASSWORD_BCRYPT);
-    $password_salted = $data["password"] . $this->passwordSalt;
-    $data["password"] = password_hash($password_salted, PASSWORD_BCRYPT);
+    // Combine password with salt and hash it
+    $saltedPassword = $data["password"] . $this->passwordSalt;
+    $hashedPassword = password_hash($saltedPassword, PASSWORD_BCRYPT);
 
-    // Créer l'utilisateur
-    $query_add = "INSERT INTO $this->table ( email, password) VALUES ( :email, :password )";
+    // Create the user
+    $query_add = "INSERT INTO $this->table (email, password) VALUES (:email, :password)";
     $req2 = $this->db->prepare($query_add);
     $req2->execute([
       "email" => $data["email"],
-      "password" => $data["password"]
+      "password" => $hashedPassword
     ]);
 
     $userId = $this->db->lastInsertId();
 
-    // Générer le token JWT
+    // Generate the JWT token
     $token = $this->generateJWT($userId);
 
     return ['token' => $token];
@@ -48,12 +47,17 @@ class AuthModel extends SqlConnect {
 
     $user = $req->fetch(PDO::FETCH_ASSOC);
 
-    if ($user && password_verify($password, $user['password'])) {
-        $token = $this->generateJWT($user['id']);
-        return ['token' => $token];
-    } else {
-        throw new \Exception("Invalid credentials.");
+    if ($user) {
+        // Combine input password with salt and verify
+        $saltedPassword = $password . $this->passwordSalt;
+        
+        if (password_verify($saltedPassword, $user['password'])) {
+            $token = $this->generateJWT($user['id']);
+            return ['token' => $token];
+        }
     }
+
+    throw new \Exception("Invalid credentials.");
   }
 
   private function generateJWT(string $userId) {

@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use App\Controllers\Controller;
 use App\Models\AuthModel;
-use App\Utils\Route;
+use App\Utils\{Route, HttpException};
 
 class Auth extends Controller {
   protected object $auth;
@@ -14,8 +14,33 @@ class Auth extends Controller {
     parent::__construct($params);
   }
 
+
   #[Route("POST", "/auth/register")]
   public function register() {
-    return $this->auth->register($this->body);
+      try {
+          $data = $this->body;
+          if (empty($data['email']) || empty($data['password'])) {
+              throw new HttpException("Missing email or password.", 400);
+          }
+          $user = $this->auth->register($data);
+          return $user;
+      } catch (\Exception $e) {
+          throw new HttpException($e->getMessage(), 400);
+      }
   }
+
+  #[Route("POST", "/auth/login")]
+  public function login() {
+      try {
+          $data = $this->body;
+          if (empty($data['email']) || empty($data['password'])) {
+              throw new HttpException("Missing email or password.", 400);
+          }
+          $token = $this->auth->login($data['email'], $data['password']);
+          return $token;
+      } catch (\Exception $e) {
+          throw new HttpException($e->getMessage(), 401);
+      }
+  }
+
 }
