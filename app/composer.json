@@ -1,4 +1,6 @@
 {
+  "name": "max/biblio",
+  "description": "API pour une bibliothèque",
   "require": {
     "php": ">=7.4",
     "ext-pdo": "*",
