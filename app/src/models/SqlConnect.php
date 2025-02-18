@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use \PDO;
+use PDO;
 
 class SqlConnect {
   public object $db;
@@ -20,11 +20,7 @@ class SqlConnect {
     $this->port = getenv('DB_PORT');
 
     $dsn = 'mysql:host='.$this->host.';port='.$this->port.';dbname='.$this->dbname;
-    $this->db = new PDO(
-      $dsn,
-      $this->user,
-      $this->password
-    );
+    $this->db = new PDO($dsn, $this->user, $this->password);
 
     $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $this->db->setAttribute(PDO::ATTR_PERSISTENT, false);
@@ -32,11 +28,9 @@ class SqlConnect {
 
   public function transformDataInDot($data) {
     $dataFormated = [];
-
     foreach ($data as $key => $value) {
       $dataFormated[':' . $key] = $value;
     }
-
     return $dataFormated;
   }
 }
