@@ -1,16 +1,33 @@
 <?php
-
-require 'vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 
 use App\Router;
-use App\Controllers\{User, Dogs, Auth};
+use App\utils\HttpException;
 
-$controllers = [
-    User::class,
-    Dogs::class,
-    Auth::class,
-];
+header('Content-Type: application/json; charset=utf-8');
 
-$router = new Router();
-$router->registerControllers($controllers);
-$router->run();
+// Gestion globale des exceptions
+set_exception_handler(function ($exception) {
+    // Si c'est une HttpException personnalisée
+    if (method_exists($exception, 'getHttpCode')) {
+        http_response_code($exception->getHttpCode());
+    } else {
+        http_response_code($exception->getCode() ?: 500);
+    }
+
+    echo json_encode([
+        'error' => $exception->getMessage()
+    ]);
+    exit;
+});
+
+try {
+    $router = new Router();
+    $router->run();
+} catch (HttpException $e) {
+    http_response_code($e->getHttpCode() ?: 500);
+    echo json_encode(['error' => $e->getMessage()]);
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode(['error' => $e->getMessage()]);
+}

@@ -1,10 +1,10 @@
 <?php
-
-namespace App\Utils;
+namespace App\utils;
 
 use Exception;
 
-class HttpException extends Exception {
+class HttpException extends Exception
+{
     const HTTP_BAD_REQUEST = 400;
     const HTTP_UNAUTHORIZED = 401;
     const HTTP_FORBIDDEN = 403;
@@ -14,7 +14,7 @@ class HttpException extends Exception {
 
     protected $httpCode;
 
-    public function __construct($message, $httpCode, $code = 0, Exception $previous = null) {
+    public function __construct($message, $httpCode = 500, $code = 0, Exception $previous = null) {
         $this->httpCode = $httpCode;
         parent::__construct($message, $code, $previous);
     }

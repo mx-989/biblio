@@ -1,42 +1,54 @@
 <?php
+namespace App\utils;
 
-namespace App\Utils;
+class JWT
+{
+    private static $secret = "shika-shika"; // Mettez ceci dans un .env en production
 
-class JWT {
-  private static $secret = "mon-super-secret";
+    public static function generate(array $payload): string
+    {
+        $header = ['alg' => 'HS256', 'typ' => 'JWT'];
+        $base64Header = self::base64UrlEncode(json_encode($header));
+        
+        $base64Payload = self::base64UrlEncode(json_encode($payload));
 
-  public static function generate($payload) {
-    // Base 64
-      // Header
-    $header = self::base64UrlEncode(json_encode(['alg' => 'HS256', 'typ' => 'JWT']));
-    // Payload
-    $payload = self::base64UrlEncode(json_encode($payload));
-    
-    // Concaténation header . payload
-    $concat_signature = "$header.$payload";
-    // Génération de la signature avec hash
-    $signature = hash_hmac("sha256", $concat_signature, self::$secret, true);
-      //  base64 de la signature
-    $signature = self::base64UrlEncode($signature);
+        $signatureData = $base64Header . '.' . $base64Payload;
+        $rawSignature = hash_hmac('sha256', $signatureData, self::$secret, true);
+        $base64Signature = self::base64UrlEncode($rawSignature);
 
-    // Return -> header . payload . signature
-    return "$header.$payload.$signature";
-  }
-
-  public static function verify($jwt) {
-    // Ensure the JWT has the correct number of segments
-    $segments = explode('.', $jwt);
-    if (count($segments) !== 3) {
-        return false;  // Invalid JWT structure
+        return $base64Header . '.' . $base64Payload . '.' . $base64Signature;
     }
 
-    list($header, $payload, $signature) = $segments;
-    $expectedSignature = self::base64UrlEncode(hash_hmac('sha256', "$header.$payload", self::$secret, true));
-    
-    return hash_equals($expectedSignature, $signature);
-}
-  
-  private static function base64UrlEncode($data) {
-    return rtrim(strtr(base64_encode($data), '+/', '-_'), characters: '=');
-  }
+    public static function verify(string $jwt): bool
+    {
+        $parts = explode('.', $jwt);
+        if (count($parts) !== 3) {
+            return false;
+        }
+
+        list($header, $payload, $signature) = $parts;
+        $expected = self::base64UrlEncode(
+            hash_hmac('sha256', "$header.$payload", self::$secret, true)
+        );
+
+        return hash_equals($expected, $signature);
+    }
+
+    public static function decode(string $jwt): ?array
+    {
+        if (!self::verify($jwt)) {
+            return null;
+        }
+
+        list($header, $payload, $signature) = explode('.', $jwt);
+        $jsonPayload = base64_decode(strtr($payload, '-_', '+/'));
+        $decoded = json_decode($jsonPayload, true);
+
+        return $decoded;
+    }
+
+    private static function base64UrlEncode(string $data): string
+    {
+        return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+    }
 }
