@@ -16,10 +16,8 @@ class Router
 
     public function __construct()
     {
-        // Auth
         $this->routes[] = new Route('POST', '/login', [AuthController::class, 'login']);
 
-        // Livres
         $this->routes[] = new Route('GET', '/books', [BookController::class, 'index']);
         $this->routes[] = new Route('GET', '/books/{id}', [BookController::class, 'show']);
         $this->routes[] = new Route(
@@ -41,7 +39,6 @@ class Router
             [AuthMiddleware::class, AdminMiddleware::class]
         );
 
-        // Auteurs
         $this->routes[] = new Route('GET', '/authors', [AuthorController::class, 'index']);
         $this->routes[] = new Route('GET', '/authors/{id}', [AuthorController::class, 'show']);
         $this->routes[] = new Route(
@@ -63,7 +60,6 @@ class Router
             [AuthMiddleware::class, AdminMiddleware::class]
         );
 
-        // Utilisateurs
         $this->routes[] = new Route(
             'GET',
             '/users',
@@ -95,7 +91,6 @@ class Router
             [AuthMiddleware::class, AdminMiddleware::class]
         );
 
-        // Emprunts
         $this->routes[] = new Route(
             'GET',
             '/borrows',

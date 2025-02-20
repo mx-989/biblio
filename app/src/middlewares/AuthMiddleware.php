@@ -20,7 +20,6 @@ class AuthMiddleware
             throw new HttpException('Invalid or expired token', 401);
         }
 
-        // Stocker le payload
         $_SERVER['user'] = $payload;
     }
 }

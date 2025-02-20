@@ -76,16 +76,13 @@ class UserController
 
     public function changePassword($id)
     {
-        // 1. Récupérer l’utilisateur en base
         $user = $this->userModel->getById($id);
         if (!$user) {
             throw new HttpException('User not found', 404);
         }
     
-        // 2. Vérifier qui est connecté (AuthMiddleware a déjà décodé le token dans $_SERVER['user'])
-        $connectedUser = $_SERVER['user']; // contient e.g. ['user_id' => 3, 'username' => '...', 'is_admin' => 0]
+        $connectedUser = $_SERVER['user']; 
     
-        // 3. Vérifier si c’est le même user ou un admin
         $isSameUser = ($connectedUser['user_id'] == $id);
         $isAdmin = ($connectedUser['is_admin'] == 1);
     
@@ -93,7 +90,6 @@ class UserController
             throw new HttpException('Forbidden', 403);
         }
     
-        // 4. Récupérer l’input JSON : ancien mot de passe, nouveau mot de passe
         $inputData = json_decode(file_get_contents('php://input'), true);
         $oldPassword = $inputData['old_password'] ?? null;
         $newPassword = $inputData['new_password'] ?? null;
@@ -102,25 +98,19 @@ class UserController
             throw new HttpException('Missing new_password', 400);
         }
     
-        // 5. Si ce n’est pas un admin, on exige l’ancien mot de passe correct
-        // (un admin peut forcer le changement sans connaître l'ancien mot de passe)
         if (!$isAdmin) {
             if (!$oldPassword) {
                 throw new HttpException('Missing old_password', 400);
             }
-            // Vérifier l’ancien mot de passe
             if (!password_verify($oldPassword, $user['password'])) {
                 throw new HttpException('Invalid old password', 401);
             }
         }
     
-        // 6. Générer le nouveau hash
         $newHash = password_hash($newPassword, PASSWORD_BCRYPT);
     
-        // 7. Mettre à jour en base
         $this->userModel->updatePassword($id, $newHash);
     
-        // 8. Réponse
         echo json_encode([
             'message' => 'Password changed successfully'
         ]);

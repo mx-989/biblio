@@ -2,7 +2,7 @@
 
 ## Guide d'utilisation de l'API : 
 
-[Documentation de l'API](https://github.com/mx-989/biblio/blob/main/API.md)
+[Documentation de l'API](./API.md)
 
 ## Introduction
 
@@ -24,12 +24,12 @@ Avant de démarrer le projet, vous devez configurer vos variables d’environnem
 cp .env.sample .env
 ```
 
-- `DB_NAME`: The name of your MySQL database
-- `DB_USER`: The MySQL user
-- `DB_PASSWORD`: The MySQL user's password
-- `DB_ROOT_PASSWORD`: The MySQL root user's password
-- `DB_PORT`: The port for MySQL (default is 3306)
-- `PHPMYADMIN_PORT`: The port for phpMyAdmin (default is 8090)
+- `DB_NAME`: Le nom de votre base de données MySQL (celui utilisé : biblio)
+- `DB_USER`: L'utilisateur MySQL 
+- `DB_PASSWORD`: Le mot de passe de l'utilisateur MySQL 
+- `DB_ROOT_PASSWORD`: Le mot de passe de l'utilisateur MySQL 
+- `DB_PORT`: Le port de MySQL (celui utilisé : 3307)
+- `PHPMYADMIN_PORT`: Le port de phpMyAdmin (celui utilisé : 8191)
 
 ## Comment l'utiliser ?
 
@@ -52,6 +52,12 @@ docker-compose up -d
 Cette commande démarre le serveur Nginx, l’application PHP, la base de données MySQL et phpMyAdmin.
 
 _Et voilà ! Vous disposez maintenant d’un environnement de développement PHP entièrement conteneurisé. Bon développement !_
+
+Vous pouvez importer dans mysql l'export de la database présent dans le fichier [database_export.sql](./database_export.sql). 
+
+Si ça ne marche pas, vous trouverez les instructions SQL textuelles [ici](https://raw.githubusercontent.com/mx-989/biblio/refs/heads/main/database_instructions.md).
+
+Vous pouvez trouver un plan de la database [ici](./database.png).
 
 ## Accéder aux services
 

@@ -1,6 +1,8 @@
 
 # Documentation de l'API Biblio
 
+*Pour faciliter la démonstration, un compte admin avec l'username* `admin` *et au mot de passe* `password` *vous est fourni par défaut.*
+
 ## Authentification
 
 | Opération | Endpoint  | Méthode   | Authentification | Body (Exemple)                                                                 | Description                                        |

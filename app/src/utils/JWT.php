@@ -3,7 +3,7 @@ namespace App\utils;
 
 class JWT
 {
-    private static $secret = "shika-shika"; // Mettez ceci dans un .env en production
+    private static $secret = "shika-shika"; // Mettre ça dans un .env en production
 
     public static function generate(array $payload): string
     {

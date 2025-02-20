@@ -6,9 +6,7 @@ use App\utils\HttpException;
 
 header('Content-Type: application/json; charset=utf-8');
 
-// Gestion globale des exceptions
 set_exception_handler(function ($exception) {
-    // Si c'est une HttpException personnalisée
     if (method_exists($exception, 'getHttpCode')) {
         http_response_code($exception->getHttpCode());
     } else {

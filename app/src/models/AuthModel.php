@@ -20,11 +20,9 @@ class AuthModel extends SqlConnect {
       throw new HttpException("User already exists!", 400);
     }
 
-    // Combine password with salt and hash it
     $saltedPassword = $data["password"] . $this->passwordSalt;
     $hashedPassword = password_hash($saltedPassword, PASSWORD_BCRYPT);
 
-    // Create the user
     $query_add = "INSERT INTO $this->table (email, password) VALUES (:email, :password)";
     $req2 = $this->db->prepare($query_add);
     $req2->execute([
@@ -34,7 +32,6 @@ class AuthModel extends SqlConnect {
 
     $userId = $this->db->lastInsertId();
 
-    // Generate the JWT token
     $token = $this->generateJWT($userId);
 
     return ['token' => $token];
@@ -48,7 +45,6 @@ class AuthModel extends SqlConnect {
     $user = $req->fetch(PDO::FETCH_ASSOC);
 
     if ($user) {
-        // Combine input password with salt and verify
         $saltedPassword = $password . $this->passwordSalt;
         
         if (password_verify($saltedPassword, $user['password'])) {

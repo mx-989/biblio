@@ -44,9 +44,6 @@ class BookController
         echo json_encode(['message' => 'Book created', 'id' => $newId]);
     }
 
-    /**
-     * Mise à jour partielle : conserve les anciennes valeurs si non fournies.
-     */
     public function update($id)
     {
         $book = $this->bookModel->getById($id);
@@ -56,7 +53,6 @@ class BookController
 
         $inputData = json_decode(file_get_contents('php://input'), true);
 
-        // Conserver les anciennes valeurs si absentes
         $title = $inputData['title'] ?? $book['title'];
         $author_id = $inputData['author_id'] ?? $book['author_id'];
         $published_at = $inputData['published_at'] ?? $book['published_at'];

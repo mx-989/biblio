@@ -40,13 +40,11 @@ class Route
         preg_match($patternRegex, $uri, $matches);
         array_shift($matches);
 
-        // Middlewares
         foreach ($this->middlewares as $middleware) {
             $instance = new $middleware;
             $instance->handle();
         }
 
-        // Contrôleur
         [$class, $method] = $this->callback;
         $controller = new $class;
         call_user_func_array([$controller, $method], $matches);
