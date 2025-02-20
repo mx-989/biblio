@@ -1,26 +1,28 @@
-# PHP Docker Project - A Fully Containerized PHP Development Environment
+# Biblio - Une API de gestion pour bibliothèques communeautaires.
+
+## Guide d'utilisation de l'API : 
+
+[Documentation de l'API](https://github.com/mx-989/biblio/blob/main/API.md)
 
 ## Introduction
 
-Welcome to the PHP Docker Project! This project is designed to make your life easier by providing a fully containerized PHP development environment. With Docker, you can run your PHP application, MySQL database, and phpMyAdmin with just a few commands. No more "it works on my machine" excuses!
+Ce projet a pour objectif de faciliter la vie des responsables de bibliothèques.
 
-## Prerequisites
+## Prérequis
 
-Before you can start, you'll need to have Docker and Docker Compose installed on your machine. Here's how to do it:
+Avant de commencer, assurez-vous d’avoir Docker et Docker Compose installés sur votre machine. Voici comment procéder :
 
-- For macOS and Windows users, download and install [Docker Desktop](https://docs.docker.com/get-started/introduction/get-docker-desktop/).
-- For Linux users, follow the instructions in the [Docker documentation](https://docs.docker.com/desktop/setup/install/linux/).
-- Composer installed on your machine. You can download it from [here](https://getcomposer.org/download/).
+- Utilisateurs macOS et Windows : Téléchargez et installez [Docker Desktop](https://docs.docker.com/get-started/introduction/get-docker-desktop/).
+- Utilisateurs Linux : Suivez les instructions de la [Documentation de Docker](https://docs.docker.com/desktop/setup/install/linux/).
+- Composer doit être installé sur votre machine. Vous pouvez le télécharger [ici](https://getcomposer.org/download/).
 
 ## Configuration
 
-Before you start the project, you'll need to configure your environment variables. Copy the [.env.sample](./.env.sample) file to `.env` and fill in the required values:
+Avant de démarrer le projet, vous devez configurer vos variables d’environnement. Copiez le fichier [.env.sample](./.env.sample) en `.env` et renseignez les valeurs requises :
 
 ```sh
 cp .env.sample .env
 ```
-
-Edit the `.env` file and set the following variables:
 
 - `DB_NAME`: The name of your MySQL database
 - `DB_USER`: The MySQL user
@@ -29,36 +31,37 @@ Edit the `.env` file and set the following variables:
 - `DB_PORT`: The port for MySQL (default is 3306)
 - `PHPMYADMIN_PORT`: The port for phpMyAdmin (default is 8090)
 
-## How to Use?
+## Comment l'utiliser ?
 
 ```sh
 cd app && composer install && cd ../
 ```
 
-Once you have Docker and Docker Compose installed and your environment variables configured, you can start the project with the following command:
+Une fois Docker et Docker Compose installés et les variables d’environnement configurées, vous pouvez démarrer le projet avec la commande suivante :
 
 ```sh
 docker-compose up -d
 ```
 
-**Explanation:**
+**Explication :**
 
-- `docker-compose`: The Docker Compose command
-- `up`: The command to start the services
-- `-d`: Run the services in detached mode (in the background)
+- `docker-compose`: Commande pour utiliser Docker Compose
+- `up`: Démarre les services
+- `-d`: Exécute les services en arrière-plan (mode détaché)
 
-This command will start the Nginx server, PHP application, MySQL database, and phpMyAdmin.
+Cette commande démarre le serveur Nginx, l’application PHP, la base de données MySQL et phpMyAdmin.
 
-_That's it! You now have a fully containerized PHP development environment. Happy coding!_
+_Et voilà ! Vous disposez maintenant d’un environnement de développement PHP entièrement conteneurisé. Bon développement !_
 
-## Accessing the Services
+## Accéder aux services
 
-- Your PHP application will be available at [http://localhost](http://localhost)
-- phpMyAdmin will be available at [http://localhost:8090](http://localhost:8090).
+- Votre API sera disponible à l’adresse [http://localhost:4000](http://localhost:4000)
+- La gestion de DB via phpMyAdmin sera accessible à l’adresse [http://localhost:8191](http://localhost:8191).
 
-## Stopping the Project
 
-To stop the project, run the following command:
+## Arrêter le projet
+
+Pour arrêter le projet, exécutez la commande suivante :
 
 ```sh
 docker-compose down
@@ -66,20 +69,14 @@ docker-compose down
 
 ## Logs
 
-To view the logs of the services, you can use the following command:
+Pour consulter les logs des services, utilisez la commande suivante :
 
 ```sh
 docker-compose logs -f
 ```
 
-This will show the logs of all the services. Press `Ctrl + C` to exit the logs.
+Cette commande affiche les logs de tous les services en cours d’exécution. Pour quitter, appuyez sur `Ctrl + C`.
 
 ## License
 
-This project is open-source software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-
-## Conclusion
-
-And there you have it! A fully containerized PHP development environment with Docker. Now you can focus on writing awesome PHP code without worrying about the underlying infrastructure. Happy coding!
-
-P.S. If you encounter any issues, remember: "It's not a bug, it's a feature!"
+Ce projet est un logiciel open-source sous licence [MIT](https://opensource.org/licenses/MIT).
