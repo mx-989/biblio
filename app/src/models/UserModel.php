@@ -1,82 +1,59 @@
 <?php
+namespace App\models;
 
-namespace App\Models;
+use App\Models\SqlConnect;
+use PDO;
 
-use \PDO;
-use stdClass;
+class UserModel
+{
+    private $conn;
 
-class UserModel extends SqlConnect {
-    private $table = "users";
-    public $authorized_fields_to_update = ['first_name', 'last_name'];
-
-    public function add(array $data) {
-      $query = "
-        INSERT INTO $this->table (first_name, last_name, promo, school)
-        VALUES (:first_name, :last_name, :promo, :school)
-      ";
-
-      $req = $this->db->prepare($query);
-      $req->execute($data);
+    public function __construct()
+    {
+        $this->conn = (new SqlConnect())->db;
     }
 
-    public function delete(int $id) {
-      $req = $this->db->prepare("DELETE FROM $this->table WHERE id = :id");
-      $req->execute(["id" => $id]);
-      return new stdClass();
+    public function getAll()
+    {
+        $stmt = $this->conn->query("SELECT id, username, email, is_admin FROM users");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function get(int $id) {
-      $req = $this->db->prepare("SELECT * FROM users WHERE id = :id");
-      $req->execute(["id" => $id]);
-
-      return $req->rowCount() > 0 ? $req->fetch(PDO::FETCH_ASSOC) : new stdClass();
+    public function getById($id)
+    {
+        $stmt = $this->conn->prepare("SELECT id, username, email, is_admin, password FROM users WHERE id = ?");
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function getAll(?int $limit = null) {
-      $query = "SELECT * FROM {$this->table}";
-      
-      if ($limit !== null) {
-          $query .= " LIMIT :limit";
-          $params = [':limit' => (int)$limit];
-      } else {
-          $params = [];
-      }
-      
-      $req = $this->db->prepare($query);
-      foreach ($params as $key => $value) {
-          $req->bindValue($key, $value, PDO::PARAM_INT);
-      }
-      $req->execute();
-      
-      return $req->fetchAll(PDO::FETCH_ASSOC);
+    public function getByUsername($username)
+    {
+        $stmt = $this->conn->prepare("SELECT * FROM users WHERE username = ?");
+        $stmt->execute([$username]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function getLast() {
-      $req = $this->db->prepare("SELECT * FROM $this->table ORDER BY id DESC LIMIT 1");
-      $req->execute();
-
-      return $req->rowCount() > 0 ? $req->fetch(PDO::FETCH_ASSOC) : new stdClass();
+    public function create($username, $email, $passwordHash, $isAdmin = 0)
+    {
+        $stmt = $this->conn->prepare("INSERT INTO users (username, email, password, is_admin) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$username, $email, $passwordHash, $isAdmin]);
+        return $this->conn->lastInsertId();
     }
 
-    public function update(array $data, int $id) {
-      $request = "UPDATE $this->table SET ";
-      $params = [];
-      $fields = [];
-  
-      # Prepare the query dynamically based on the provided data
-      foreach ($data as $key => $value) {
-          if (in_array($key, $this->authorized_fields_to_update)) {
-              $fields[] = "$key = :$key";
-              $params[":$key"] = $value;
-          }
-      }
-  
-      $params[':id'] = $id;
-      $query = $request . implode(", ", $fields) . " WHERE id = :id";
-  
-      $req = $this->db->prepare($query);
-      $req->execute($params);
-      
-      return $this->get($id);
-  }
+    public function update($id, $username, $email, $isAdmin)
+    {
+        $stmt = $this->conn->prepare("UPDATE users SET username = ?, email = ?, is_admin = ? WHERE id = ?");
+        return $stmt->execute([$username, $email, $isAdmin, $id]);
+    }
+
+    public function delete($id)
+    {
+        $stmt = $this->conn->prepare("DELETE FROM users WHERE id = ?");
+        return $stmt->execute([$id]);
+    }
+    public function updatePassword($id, $newHash)
+    {
+        $stmt = $this->conn->prepare("UPDATE users SET password = ? WHERE id = ?");
+        return $stmt->execute([$newHash, $id]);
+    }    
 }
